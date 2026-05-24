@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCP FullStack Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#f0f9ff', 100:'#e0f2fe', 400:'#38bdf8', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1', 900:'#0c4a6e' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #0f172a; color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; margin: 0; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .tab-active { background: #0ea5e9; color: white; }
+    .tab { transition: all 0.15s; cursor: pointer; }
+    .tab:hover:not(.tab-active) { background: #1e293b; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; }
+    .btn { transition: all 0.15s; cursor: pointer; }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.98); }
+    .input { background: #0f172a; border: 1px solid #334155; color: #e2e8f0; border-radius: 8px; padding: 8px 12px; width: 100%; outline: none; transition: border 0.15s; }
+    .input:focus { border-color: #0ea5e9; }
+    select.input option { background: #1e293b; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+    .file-item { padding: 4px 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; transition: background 0.1s; }
+    .file-item:hover { background: #334155; }
+    .file-item.selected { background: #0ea5e9; color: white; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #334155; border-top-color: #0ea5e9; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .terminal-line { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.6; }
+    .glow { box-shadow: 0 0 20px rgba(14,165,233,0.15); }
+  </style>
+</head>
+<body>
+<div id="app">Loading...</div>
+
+<script type="module">
+const { createElement: h, useState, useEffect, useRef, useCallback } = React;
+import React from 'https://esm.sh/react@18';
+import { createRoot } from 'https://esm.sh/react-dom@18/client';
+
+// ─── Utils ───────────────────────────────────────────────────────────────────
+
+const BASE = '/api/ui';
+
+async function api(path, opts = {}) {
+  const r = await fetch(BASE + path, opts);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ error: r.statusText }));
+    throw new Error(err.error || r.statusText);
+  }
+  return r.json();
+}
+
+function post(path, body) {
+  return api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+}
+
+// ─── Icons ───────────────────────────────────────────────────────────────────
+
+const Icon = ({ name, size = 16 }) => {
+  const icons = {
+    dashboard: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+    folder: 'M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z',
+    file: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+    terminal: 'M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+    code: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+    zap: 'M13 10V3L4 14h7v7l9-11h-7z',
+    refresh: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
+    check: 'M5 13l4 4L19 7',
+    x: 'M6 18L18 6M6 6l12 12',
+    copy: 'M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z',
+    play: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+    arrow: 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8',
+    star: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+    download: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4',
+    info: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+  };
+  return h('svg', {
+    xmlns: 'http://www.w3.org/2000/svg', width: size, height: size,
+    viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+    strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round',
+  }, h('path', { d: icons[name] || icons.file }));
+};
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
+
+function Dashboard() {
+  const [info, setInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await api('/info');
+      setInfo(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const tools = [
+    { name: 'Filesystem', count: 10, color: 'bg-violet-500', desc: 'read, write, edit, delete, search files' },
+    { name: 'Terminal', count: 7, color: 'bg-orange-500', desc: 'run commands, npm, pnpm, pip, build' },
+    { name: 'Code Gen', count: 9, color: 'bg-sky-500', desc: 'React, Next.js, Express, FastAPI, Expo...' },
+    { name: 'Debug', count: 8, color: 'bg-red-500', desc: 'analyze errors, fix code, review, refactor' },
+    { name: 'Design', count: 5, color: 'bg-pink-500', desc: 'design tokens, components, landing pages' },
+    { name: 'Project', count: 5, color: 'bg-green-500', desc: 'analyze project, architecture, security scan' },
+  ];
+
+  return h('div', { className: 'p-6 space-y-6 fade-in' },
+    // Header
+    h('div', { className: 'flex items-center justify-between' },
+      h('div', null,
+        h('h1', { className: 'text-2xl font-bold text-white' }, '🚀 MCP FullStack Builder'),
+        h('p', { className: 'text-slate-400 text-sm mt-1' }, 'Autonomous AI FullStack Engineering Platform'),
+      ),
+      h('div', { className: 'flex items-center gap-3' },
+        info && h('span', { className: 'badge bg-green-500/20 text-green-400' },
+          h('span', { className: 'w-2 h-2 bg-green-400 rounded-full inline-block' }),
+          'Running'
+        ),
+        h('button', { onClick: load, className: 'btn p-2 card rounded-lg text-slate-400 hover:text-white' },
+          h(Icon, { name: 'refresh', size: 16 })
+        ),
+      ),
+    ),
+
+    // Stats
+    loading
+      ? h('div', { className: 'flex items-center gap-2 text-slate-400' }, h('div', { className: 'spinner' }), 'Loading...')
+      : info && h('div', { className: 'grid grid-cols-3 gap-4' },
+        [
+          { label: 'Total Tools', value: info.tools.total, icon: 'zap', color: 'text-sky-400' },
+          { label: 'AI Model', value: info.ai.model.split('-').slice(0,2).join('-'), icon: 'star', color: 'text-violet-400' },
+          { label: 'Workspace Files', value: info.workspace.files, icon: 'file', color: 'text-green-400' },
+        ].map(({ label, value, icon, color }) =>
+          h('div', { key: label, className: 'card p-5 glow' },
+            h('div', { className: `${color} mb-2` }, h(Icon, { name: icon, size: 20 })),
+            h('div', { className: 'text-2xl font-bold text-white' }, value),
+            h('div', { className: 'text-slate-400 text-sm mt-1' }, label),
+          )
+        )
+      ),
+
+    // Tool categories
+    h('div', null,
+      h('h2', { className: 'text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3' }, 'Tool Categories'),
+      h('div', { className: 'grid grid-cols-2 gap-3' },
+        tools.map(t =>
+          h('div', { key: t.name, className: 'card p-4 flex items-start gap-3' },
+            h('div', { className: `${t.color} rounded-lg p-2 flex-shrink-0` },
+              h('span', { className: 'text-white text-xs font-bold' }, t.count)
+            ),
+            h('div', null,
+              h('div', { className: 'font-semibold text-white text-sm' }, t.name),
+              h('div', { className: 'text-slate-400 text-xs mt-0.5' }, t.desc),
+            )
+          )
+        )
+      )
+    ),
+
+    // MCP connection info
+    h('div', { className: 'card p-5' },
+      h('div', { className: 'flex items-center gap-2 mb-3' },
+        h(Icon, { name: 'info', size: 16 }), h('span', { className: 'font-semibold text-sm' }, 'Connect via MCP')
+      ),
+      h('p', { className: 'text-slate-400 text-sm mb-3' }, 'Add this to your Claude Desktop / Cline / Cursor / Windsurf config:'),
+      h('pre', { className: 'bg-slate-900 rounded-lg p-4 text-sky-300 text-xs overflow-x-auto terminal-line' },
+        `{\n  "mcpServers": {\n    "fullstack-builder": {\n      "url": "${window.location.origin}/api/mcp"\n    }\n  }\n}`
+      ),
+    ),
+  );
+}
+
+// ─── Workspace ───────────────────────────────────────────────────────────────
+
+function Workspace() {
+  const [currentPath, setCurrentPath] = useState('.');
+  const [items, setItems] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileContent, setFileContent] = useState('');
+  const [tree, setTree] = useState('');
+  const [view, setView] = useState('browser'); // browser | tree | file
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const loadDir = useCallback(async (p) => {
+    setLoading(true); setError('');
+    try {
+      const data = await api(`/workspace/list?path=${encodeURIComponent(p)}`);
+      const sorted = [...data.items].sort((a, b) => {
+        if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+      setItems(sorted);
+      setCurrentPath(p);
+      setSelectedFile(null);
+      setFileContent('');
+      setView('browser');
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); }
+  }, []);
+
+  const loadTree = useCallback(async () => {
+    setLoading(true); setError('');
+    try {
+      const data = await api(`/workspace/tree?path=.&depth=4`);
+      setTree(data.tree);
+      setView('tree');
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); }
+  }, []);
+
+  const loadFile = useCallback(async (p) => {
+    setLoading(true); setError('');
+    try {
+      const data = await api(`/workspace/file?path=${encodeURIComponent(p)}`);
+      setFileContent(data.content);
+      setSelectedFile(p);
+      setEditContent(data.content);
+      setEditing(false);
+      setView('file');
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); }
+  }, []);
+
+  const saveFile = async () => {
+    setSaving(true);
+    try {
+      await post('/workspace/write', { path: selectedFile, content: editContent });
+      setFileContent(editContent);
+      setEditing(false);
+    } catch (e) { setError(e.message); }
+    finally { setSaving(false); }
+  };
+
+  const copyContent = () => {
+    navigator.clipboard.writeText(fileContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  useEffect(() => { loadDir('.'); }, [loadDir]);
+
+  const breadcrumbs = currentPath === '.' ? ['workspace'] : ['workspace', ...currentPath.split('/').filter(Boolean)];
+
+  const getExt = (name) => name.split('.').pop()?.toLowerCase() || '';
+  const getLanguage = (name) => {
+    const ext = getExt(name);
+    const map = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', json: 'json', md: 'markdown', css: 'css', html: 'html', yaml: 'yaml', yml: 'yaml', sh: 'bash', prisma: 'prisma', go: 'go', rs: 'rust' };
+    return map[ext] || 'text';
+  };
+
+  const navigateUp = () => {
+    if (currentPath === '.') return;
+    const parts = currentPath.split('/').filter(Boolean);
+    parts.pop();
+    loadDir(parts.length === 0 ? '.' : parts.join('/'));
+  };
+
+  return h('div', { className: 'flex h-full' },
+    // Sidebar
+    h('div', { className: 'w-64 border-r border-slate-700 flex flex-col flex-shrink-0' },
+      h('div', { className: 'p-3 border-b border-slate-700 flex items-center gap-2' },
+        h('button', { onClick: () => loadDir('.'), className: 'btn text-xs text-slate-400 hover:text-white', title: 'Root' }, h(Icon, { name: 'folder', size: 14 })),
+        h('button', { onClick: navigateUp, className: 'btn text-xs text-slate-400 hover:text-white px-2 py-1 rounded', title: 'Up' }, '..'),
+        h('button', { onClick: loadTree, className: 'btn text-xs text-slate-400 hover:text-white px-2 py-1 rounded' }, 'Tree'),
+        loading && h('div', { className: 'spinner ml-auto' }),
+      ),
+      // Breadcrumb
+      h('div', { className: 'px-3 py-2 text-xs text-slate-500 flex items-center gap-1 flex-wrap border-b border-slate-700' },
+        breadcrumbs.map((b, i) => h('span', { key: i, className: 'flex items-center gap-1' },
+          i > 0 && h('span', { className: 'text-slate-600' }, '/'),
+          h('span', { className: 'text-slate-300' }, b),
+        ))
+      ),
+      h('div', { className: 'flex-1 overflow-y-auto p-2 space-y-0.5' },
+        error && h('div', { className: 'text-red-400 text-xs p-2' }, error),
+        view === 'tree'
+          ? h('pre', { className: 'text-xs text-slate-300 terminal-line p-2' }, tree)
+          : items.map(item =>
+            h('div', {
+              key: item.name,
+              className: `file-item ${selectedFile === (currentPath === '.' ? item.name : currentPath + '/' + item.name) ? 'selected' : ''}`,
+              onClick: () => {
+                const fullPath = currentPath === '.' ? item.name : currentPath + '/' + item.name;
+                if (item.type === 'dir') loadDir(fullPath);
+                else loadFile(fullPath);
+              }
+            },
+              h('span', { className: item.type === 'dir' ? 'text-sky-400' : 'text-slate-400' },
+                h(Icon, { name: item.type === 'dir' ? 'folder' : 'file', size: 13 })
+              ),
+              h('span', { className: 'truncate flex-1' }, item.name),
+              item.type === 'dir' && h('span', { className: 'text-slate-600 text-xs' }, '/'),
+            )
+          )
+      ),
+    ),
+
+    // Content pane
+    h('div', { className: 'flex-1 flex flex-col min-w-0' },
+      view === 'file' && selectedFile
+        ? h('div', { className: 'flex flex-col h-full' },
+          h('div', { className: 'flex items-center justify-between px-4 py-2 border-b border-slate-700 bg-slate-800/50 flex-shrink-0' },
+            h('div', { className: 'text-sm text-slate-300 font-mono truncate' }, selectedFile),
+            h('div', { className: 'flex items-center gap-2 flex-shrink-0' },
+              h('span', { className: 'badge bg-slate-700 text-slate-300' }, getLanguage(selectedFile.split('/').pop() || '')),
+              h('button', { onClick: copyContent, className: 'btn text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2 py-1 rounded bg-slate-700' },
+                copied ? h(Icon, { name: 'check', size: 12 }) : h(Icon, { name: 'copy', size: 12 }),
+                copied ? 'Copied' : 'Copy',
+              ),
+              h('button', { onClick: () => setEditing(!editing), className: `btn text-xs px-2 py-1 rounded ${editing ? 'bg-orange-500 text-white' : 'bg-slate-700 text-slate-300 hover:text-white'}` }, editing ? 'Cancel' : 'Edit'),
+              editing && h('button', { onClick: saveFile, className: 'btn text-xs px-2 py-1 rounded bg-sky-500 text-white flex items-center gap-1' },
+                saving ? h('div', { className: 'spinner' }) : h(Icon, { name: 'check', size: 12 }),
+                'Save'
+              ),
+            ),
+          ),
+          editing
+            ? h('textarea', {
+                value: editContent,
+                onChange: e => setEditContent(e.target.value),
+                className: 'flex-1 p-4 bg-slate-900 text-slate-200 font-mono text-xs resize-none outline-none terminal-line',
+                spellCheck: false,
+              })
+            : h('pre', { className: 'flex-1 overflow-auto p-4 text-xs text-slate-300 terminal-line' }, fileContent),
+        )
+        : h('div', { className: 'flex-1 flex items-center justify-center text-slate-600' },
+          h('div', { className: 'text-center' },
+            h(Icon, { name: 'file', size: 40 }),
+            h('p', { className: 'mt-2 text-sm' }, 'Select a file to view'),
+          )
+        )
+    ),
+  );
+}
+
+// ─── Generator ───────────────────────────────────────────────────────────────
+
+const TOOLS = [
+  { id: 'generate_react_app', label: 'React App', icon: '⚛️', color: 'from-sky-600 to-cyan-600',
+    fields: [
+      { key: 'project_name', label: 'Project Name', type: 'text', placeholder: 'my-react-app' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'A dashboard for managing...' },
+      { key: 'features', label: 'Features (comma separated)', type: 'text', placeholder: 'react-router, zustand, react-query' },
+    ]
+  },
+  { id: 'generate_nextjs_app', label: 'Next.js App', icon: '▲', color: 'from-slate-600 to-slate-700',
+    fields: [
+      { key: 'project_name', label: 'Project Name', type: 'text', placeholder: 'my-nextjs-app' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'A SaaS platform for...' },
+      { key: 'features', label: 'Features', type: 'text', placeholder: 'auth, prisma, api-routes' },
+    ]
+  },
+  { id: 'generate_express_backend', label: 'Express API', icon: '🟢', color: 'from-green-700 to-emerald-700',
+    fields: [
+      { key: 'project_name', label: 'Project Name', type: 'text', placeholder: 'my-api' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'REST API for...' },
+      { key: 'database', label: 'Database', type: 'select', options: ['none', 'postgres', 'mysql', 'sqlite', 'mongodb'] },
+      { key: 'features', label: 'Features', type: 'text', placeholder: 'jwt-auth, swagger, cors' },
+    ]
+  },
+  { id: 'generate_fastapi_backend', label: 'FastAPI', icon: '🐍', color: 'from-yellow-700 to-amber-700',
+    fields: [
+      { key: 'project_name', label: 'Project Name', type: 'text', placeholder: 'my-fastapi' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'API for...' },
+      { key: 'database', label: 'Database', type: 'select', options: ['sqlite', 'postgres', 'mysql'] },
+      { key: 'features', label: 'Features', type: 'text', placeholder: 'jwt-auth, sqlalchemy, alembic' },
+    ]
+  },
+  { id: 'generate_mobile_app', label: 'Expo Mobile', icon: '📱', color: 'from-violet-700 to-purple-700',
+    fields: [
+      { key: 'project_name', label: 'Project Name', type: 'text', placeholder: 'my-expo-app' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'A mobile app for...' },
+      { key: 'features', label: 'Features', type: 'text', placeholder: 'navigation, auth, maps, camera' },
+    ]
+  },
+  { id: 'generate_landing_page', label: 'Landing Page', icon: '🎨', color: 'from-pink-700 to-rose-700',
+    fields: [
+      { key: 'product_name', label: 'Product Name', type: 'text', placeholder: 'MyProduct' },
+      { key: 'tagline', label: 'Tagline', type: 'text', placeholder: 'The best way to...' },
+      { key: 'description', label: 'Description', type: 'textarea', placeholder: 'We help teams...' },
+      { key: 'sections', label: 'Sections', type: 'text', placeholder: 'hero, features, pricing, faq, cta' },
+    ]
+  },
+  { id: 'generate_code', label: 'Custom Code', icon: '🔧', color: 'from-orange-700 to-red-700',
+    fields: [
+      { key: 'description', label: 'What to generate', type: 'textarea', placeholder: 'A TypeScript function that...' },
+      { key: 'language', label: 'Language', type: 'text', placeholder: 'TypeScript' },
+      { key: 'framework', label: 'Framework (optional)', type: 'text', placeholder: 'React, Express, etc.' },
+      { key: 'project_name', label: 'Output directory (optional)', type: 'text', placeholder: 'my-code' },
+    ]
+  },
+];
+
+function Generator() {
+  const [selected, setSelected] = useState(null);
+  const [params, setParams] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+
+  const selectTool = (tool) => {
+    setSelected(tool);
+    const defaults = {};
+    tool.fields.forEach(f => {
+      if (f.type === 'select') defaults[f.key] = f.options[0];
+    });
+    setParams(defaults);
+    setResult(null);
+    setError('');
+  };
+
+  const run = async () => {
+    if (!selected) return;
+    const missing = selected.fields.filter(f => f.type !== 'select' && !params[f.key] && !f.optional && f.key !== 'features' && f.key !== 'framework' && f.key !== 'sections');
+    if (missing.length) { setError(`Missing: ${missing.map(f => f.label).join(', ')}`); return; }
+
+    const cleanParams = { ...params };
+    if (cleanParams.features && typeof cleanParams.features === 'string') {
+      cleanParams.features = cleanParams.features.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    setLoading(true); setError(''); setResult(null);
+    try {
+      const data = await post('/generate', { tool: selected.id, params: cleanParams });
+      setResult(data);
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); }
+  };
+
+  return h('div', { className: 'p-6 space-y-6 fade-in' },
+    h('div', null,
+      h('h2', { className: 'text-xl font-bold text-white' }, '⚡ Code Generator'),
+      h('p', { className: 'text-slate-400 text-sm mt-1' }, 'Générez des applications complètes avec Mistral AI'),
+    ),
+
+    // Tool grid
+    !selected && h('div', { className: 'grid grid-cols-2 gap-3' },
+      TOOLS.map(tool =>
+        h('button', {
+          key: tool.id,
+          onClick: () => selectTool(tool),
+          className: `btn card p-5 text-left hover:border-sky-500 transition-all`,
+        },
+          h('div', { className: `bg-gradient-to-br ${tool.color} rounded-lg w-10 h-10 flex items-center justify-center text-xl mb-3` }, tool.icon),
+          h('div', { className: 'font-semibold text-white text-sm' }, tool.label),
+          h('div', { className: 'text-slate-400 text-xs mt-1' }, 'Click to configure'),
+        )
+      )
+    ),
+
+    // Form
+    selected && !result && h('div', { className: 'space-y-4 fade-in' },
+      h('div', { className: 'flex items-center gap-3' },
+        h('button', { onClick: () => setSelected(null), className: 'btn text-slate-400 hover:text-white' },
+          h(Icon, { name: 'x', size: 16 })
+        ),
+        h('div', { className: `bg-gradient-to-br ${selected.color} rounded-lg w-8 h-8 flex items-center justify-center text-lg` }, selected.icon),
+        h('h3', { className: 'font-bold text-white' }, selected.label),
+      ),
+      h('div', { className: 'card p-5 space-y-4' },
+        selected.fields.map(field =>
+          h('div', { key: field.key },
+            h('label', { className: 'block text-xs font-medium text-slate-400 mb-1.5' }, field.label),
+            field.type === 'textarea'
+              ? h('textarea', { rows: 3, placeholder: field.placeholder, value: params[field.key] || '', onChange: e => setParams(p => ({ ...p, [field.key]: e.target.value })), className: 'input resize-none' })
+              : field.type === 'select'
+              ? h('select', { value: params[field.key] || field.options[0], onChange: e => setParams(p => ({ ...p, [field.key]: e.target.value })), className: 'input' },
+                  field.options.map(o => h('option', { key: o, value: o }, o))
+                )
+              : h('input', { type: 'text', placeholder: field.placeholder, value: params[field.key] || '', onChange: e => setParams(p => ({ ...p, [field.key]: e.target.value })), className: 'input' }),
+          )
+        ),
+        error && h('div', { className: 'text-red-400 text-sm bg-red-500/10 rounded-lg p-3 border border-red-500/20' }, '⚠️ ' + error),
+        h('button', {
+          onClick: run,
+          disabled: loading,
+          className: 'btn w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold flex items-center justify-center gap-2',
+        },
+          loading ? h('div', { className: 'spinner' }) : h(Icon, { name: 'zap', size: 16 }),
+          loading ? 'Génération en cours...' : '🚀 Générer',
+        ),
+      ),
+    ),
+
+    // Result
+    selected && result && h('div', { className: 'space-y-4 fade-in' },
+      h('div', { className: 'flex items-center gap-3' },
+        h('button', { onClick: () => { setResult(null); }, className: 'btn text-slate-400 hover:text-white' },
+          h(Icon, { name: 'arrow', size: 16 })
+        ),
+        h('h3', { className: 'font-bold text-white' }, 'Résultat'),
+      ),
+      h('div', { className: 'card p-4 border-green-500/30 bg-green-500/5' },
+        h('div', { className: 'flex items-center gap-2 text-green-400 font-semibold text-sm mb-3' },
+          h(Icon, { name: 'check', size: 16 }), '✅ Génération terminée'
+        ),
+        result.writtenFiles && result.writtenFiles.length > 0 && h('div', null,
+          h('div', { className: 'text-xs text-slate-400 mb-2' }, `${result.writtenFiles.length} fichiers créés dans le workspace:`),
+          h('div', { className: 'space-y-1 max-h-40 overflow-y-auto' },
+            result.writtenFiles.map((f, i) =>
+              h('div', { key: i, className: 'text-xs font-mono text-slate-300 flex items-center gap-2' },
+                h('span', { className: 'text-green-500' }, '→'),
+                f
+              )
+            )
+          )
+        ),
+      ),
+      h('div', { className: 'card' },
+        h('div', { className: 'flex items-center justify-between p-3 border-b border-slate-700' },
+          h('span', { className: 'text-xs text-slate-400' }, 'Generated content'),
+          h('button', {
+            onClick: () => { navigator.clipboard.writeText(result.text); },
+            className: 'btn text-xs text-slate-400 hover:text-white flex items-center gap-1'
+          }, h(Icon, { name: 'copy', size: 12 }), 'Copy'),
+        ),
+        h('pre', { className: 'p-4 text-xs text-slate-300 overflow-auto max-h-96 terminal-line' }, result.text),
+      ),
+      h('div', { className: 'flex gap-3' },
+        h('button', { onClick: () => { setResult(null); }, className: 'btn flex-1 py-2 card rounded-xl text-slate-300 hover:text-white text-sm font-medium' }, '← Nouveau projet'),
+        h('button', { onClick: () => { setSelected(null); setResult(null); }, className: 'btn flex-1 py-2 bg-sky-500 rounded-xl text-white text-sm font-semibold' }, 'Autre outil'),
+      ),
+    ),
+  );
+}
+
+// ─── Terminal ─────────────────────────────────────────────────────────────────
+
+function Terminal() {
+  const [command, setCommand] = useState('');
+  const [cwd, setCwd] = useState('');
+  const [output, setOutput] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const outputRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const quickCmds = ['ls -la', 'pwd', 'ls workspace/', 'node --version', 'python3 --version', 'git status', 'cat package.json'];
+
+  const run = async (cmd) => {
+    const c = cmd || command;
+    if (!c.trim()) return;
+    const entry = { id: Date.now(), cmd: c, cwd: cwd || '.', running: true };
+    setOutput(o => [...o, entry]);
+    setCommand('');
+    setLoading(true);
+    try {
+      const data = await post('/terminal/run', { command: c, cwd: cwd || undefined });
+      setOutput(o => o.map(e => e.id === entry.id
+        ? { ...e, running: false, stdout: data.stdout, stderr: data.stderr, exitCode: data.exitCode }
+        : e
+      ));
+    } catch (err) {
+      setOutput(o => o.map(e => e.id === entry.id
+        ? { ...e, running: false, stderr: err.message, exitCode: 1 }
+        : e
+      ));
+    } finally {
+      setLoading(false);
+      setTimeout(() => outputRef.current?.scrollTo({ top: outputRef.current.scrollHeight, behavior: 'smooth' }), 100);
+    }
+  };
+
+  const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } };
+
+  return h('div', { className: 'flex flex-col h-full' },
+    // Quick commands
+    h('div', { className: 'p-3 border-b border-slate-700 flex items-center gap-2 overflow-x-auto flex-shrink-0' },
+      h('span', { className: 'text-slate-500 text-xs flex-shrink-0' }, 'Quick:'),
+      ...quickCmds.map(cmd =>
+        h('button', {
+          key: cmd, onClick: () => run(cmd),
+          className: 'btn flex-shrink-0 text-xs px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md font-mono',
+        }, cmd)
+      ),
+    ),
+
+    // Output
+    h('div', { ref: outputRef, className: 'flex-1 overflow-y-auto p-4 space-y-4 font-mono' },
+      output.length === 0 && h('div', { className: 'text-slate-600 text-sm text-center mt-10' },
+        h('div', { className: 'text-3xl mb-2' }, '💻'),
+        h('p', null, 'Terminal workspace'),
+        h('p', { className: 'text-xs mt-1' }, 'Commandes exécutées dans /tmp/mcp-workspace'),
+      ),
+      output.map(entry =>
+        h('div', { key: entry.id, className: 'space-y-1 fade-in' },
+          h('div', { className: 'flex items-center gap-2' },
+            h('span', { className: 'text-sky-400 text-xs' }, `[${entry.cwd}]`),
+            h('span', { className: 'text-green-400 text-xs' }, '$'),
+            h('span', { className: 'text-white text-xs' }, entry.cmd),
+            entry.running && h('div', { className: 'spinner ml-2' }),
+          ),
+          !entry.running && entry.stdout && h('pre', { className: 'text-slate-300 text-xs pl-4 terminal-line' }, entry.stdout),
+          !entry.running && entry.stderr && h('pre', { className: 'text-red-400 text-xs pl-4 terminal-line' }, entry.stderr),
+          !entry.running && h('div', { className: `text-xs pl-4 ${entry.exitCode === 0 ? 'text-green-500' : 'text-red-500'}` },
+            entry.exitCode === 0 ? '✓ Exit 0' : `✗ Exit ${entry.exitCode}`
+          ),
+        )
+      ),
+    ),
+
+    // Input
+    h('div', { className: 'border-t border-slate-700 p-3 flex-shrink-0' },
+      h('div', { className: 'flex items-center gap-2 mb-2' },
+        h('span', { className: 'text-slate-500 text-xs' }, 'cwd:'),
+        h('input', { type: 'text', placeholder: '. (workspace root)', value: cwd, onChange: e => setCwd(e.target.value), className: 'input text-xs flex-1', style: { padding: '4px 8px' } }),
+        h('button', { onClick: () => setOutput([]), className: 'btn text-xs text-slate-500 hover:text-white px-2' }, 'Clear'),
+      ),
+      h('div', { className: 'flex items-center gap-2' },
+        h('span', { className: 'text-green-400 font-mono text-sm' }, '$'),
+        h('input', {
+          ref: inputRef, type: 'text', placeholder: 'Tapez une commande... (Entrée pour exécuter)',
+          value: command, onChange: e => setCommand(e.target.value), onKeyDown: onKey,
+          className: 'input flex-1', style: { fontFamily: 'monospace', fontSize: '13px' },
+        }),
+        h('button', {
+          onClick: () => run(), disabled: loading || !command.trim(),
+          className: 'btn px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white rounded-lg text-sm font-medium flex items-center gap-1.5 disabled:opacity-50',
+        }, loading ? h('div', { className: 'spinner' }) : h(Icon, { name: 'play', size: 14 }), 'Run'),
+      ),
+    ),
+  );
+}
+
+// ─── App Shell ────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { id: 'workspace', label: 'Workspace', icon: 'folder' },
+  { id: 'generate', label: 'Générer', icon: 'zap' },
+  { id: 'terminal', label: 'Terminal', icon: 'terminal' },
+];
+
+function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const content = {
+    dashboard: h(Dashboard),
+    workspace: h(Workspace),
+    generate: h(Generator),
+    terminal: h(Terminal),
+  };
+
+  return h('div', { className: 'flex h-screen overflow-hidden' },
+    // Sidebar nav
+    h('nav', { className: 'w-56 bg-slate-900 border-r border-slate-700 flex flex-col flex-shrink-0' },
+      h('div', { className: 'p-4 border-b border-slate-700' },
+        h('div', { className: 'flex items-center gap-2' },
+          h('div', { className: 'w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center text-sm' }, '🤖'),
+          h('div', null,
+            h('div', { className: 'font-bold text-white text-sm' }, 'MCP Builder'),
+            h('div', { className: 'text-slate-500 text-xs' }, 'v1.0.0'),
+          ),
+        ),
+      ),
+      h('div', { className: 'flex-1 p-3 space-y-1' },
+        TABS.map(tab =>
+          h('button', {
+            key: tab.id,
+            onClick: () => setActiveTab(tab.id),
+            className: `tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left ${activeTab === tab.id ? 'tab-active' : 'text-slate-400'}`,
+          },
+            h(Icon, { name: tab.icon, size: 16 }),
+            tab.label,
+          )
+        ),
+      ),
+      h('div', { className: 'p-4 border-t border-slate-700' },
+        h('a', { href: '/api/mcp/info', target: '_blank', className: 'btn flex items-center gap-2 text-xs text-slate-500 hover:text-white' },
+          h(Icon, { name: 'info', size: 12 }),
+          'MCP API Info',
+        ),
+      ),
+    ),
+
+    // Main content
+    h('main', { className: 'flex-1 overflow-y-auto bg-slate-800 min-w-0' },
+      h('div', { className: `h-full ${activeTab === 'workspace' || activeTab === 'terminal' ? 'flex flex-col' : ''}` },
+        content[activeTab]
+      )
+    ),
+  );
+}
+
+createRoot(document.getElementById('app')).render(h(App));
+</script>
+</body>
+</html>
