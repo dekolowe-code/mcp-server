@@ -93,3 +93,14 @@ _Populate as needed_
 ## Pointers
 
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+
+
+
+<!-- Claude Code
++ Playwright MCP
++ Firecrawl/WebClaw
++ Context7
++ PostgreSQL/Supabase MCP
++ Filesystem MCP
++ GitHub MCP
++ Figma MCP -->
