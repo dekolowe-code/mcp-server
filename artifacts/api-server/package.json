@@ -10,20 +10,29 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@mistralai/mistralai": "^2.2.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@workspace/api-zod": "workspace:*",
     "@workspace/db": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "drizzle-orm": "catalog:",
+    "execa": "^9.6.1",
     "express": "^5.2.1",
+    "fs-extra": "^11.3.5",
+    "glob": "^13.0.6",
     "pino": "^9.14.0",
-    "pino-http": "^10.5.0"
+    "pino-http": "^10.5.0",
+    "uuid": "^14.0.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "catalog:",
+    "@types/uuid": "^11.0.0",
     "esbuild": "0.27.3",
     "esbuild-plugin-pino": "^2.3.3",
     "pino-pretty": "^13.1.3",
