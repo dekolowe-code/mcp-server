@@ -1,0 +1,1019 @@
+# MCP FullStack Builder Ultimate
+
+## Autonomous AI FullStack Engineering Platform
+
+> Un serveur MCP ultra-avancé capable d’agir comme un véritable ingénieur logiciel autonome IA.
+> Compatible avec Claude Desktop, Cline, Cursor, Windsurf et tout client MCP.
+
+Il peut :
+
+* créer des sites web complets
+* créer des applications React / Next.js / Vue / Astro
+* créer des applications mobiles React Native / Expo / Flutter
+* créer des backends Node.js ou Python
+* générer des APIs complètes
+* générer bases de données et ORM
+* analyser des projets existants
+* corriger automatiquement les erreurs
+* exécuter commandes terminal
+* modifier du code existant
+* déployer automatiquement
+* fonctionner comme un véritable agent développeur autonome
+
+---
+
+# Table des matières
+
+1. Vision du projet
+2. Fonctionnalités principales
+3. Architectures supportées
+4. Frontend supporté
+5. Mobile supporté
+6. Backend supporté
+7. Bases de données supportées
+8. Fonctionnalités IA avancées
+9. Architecture complète du projet
+10. Installation
+11. Configuration environnement
+12. Outils MCP disponibles
+13. Système agentique autonome
+14. Génération frontend
+15. Génération mobile
+16. Génération backend
+17. Génération base de données
+18. Filesystem Tools
+19. Terminal Tools
+20. Debugging autonome
+21. Self-Healing Engine
+22. Analyse de projets existants
+23. Design Intelligence Engine
+24. Génération multimodale
+25. Déploiement automatique
+26. Sécurité
+27. Tests automatiques
+28. Docker & CI/CD
+29. Runtime management
+30. Marketplace & plugins
+31. Workflows complets
+32. Roadmap future
+
+---
+
+# 1. Vision du projet
+
+Le MCP doit agir comme :
+
+```txt
+AI Autonomous FullStack Software Engineer
+```
+
+Le système doit pouvoir :
+
+* comprendre un besoin
+* planifier le projet
+* générer architecture
+* créer frontend
+* créer backend
+* créer base de données
+* installer dépendances
+* lancer build
+* corriger erreurs
+* tester application
+* déployer automatiquement
+
+---
+
+# 2. Fonctionnalités principales
+
+## Génération frontend
+
+Support :
+
+* HTML/CSS/JS
+* React
+* Next.js
+* Vue
+* Nuxt
+* Astro
+* Svelte
+* Angular
+
+---
+
+## Génération mobile
+
+Support :
+
+* React Native
+* Expo
+* Flutter
+* Ionic
+* Capacitor
+* Tauri Mobile
+
+---
+
+## Génération backend
+
+Support :
+
+### Node.js
+
+* Express
+* Fastify
+* NestJS
+* Hono
+
+### Python
+
+* FastAPI
+* Flask
+* Django
+* Litestar
+
+### Go
+
+* Gin
+* Fiber
+
+### Rust
+
+* Axum
+* Actix
+
+---
+
+## Génération base de données
+
+Support :
+
+* PostgreSQL
+* MySQL
+* SQLite
+* MongoDB
+* Supabase
+* Firebase
+* Redis
+* Neon
+* PlanetScale
+* Turso
+
+---
+
+# 3. Architectures supportées
+
+Le MCP peut générer :
+
+* SPA
+* SSR
+* SSG
+* JAMstack
+* Microservices
+* Monorepo
+* Mobile-first
+* Offline-first
+* Realtime apps
+* PWA
+* API-first architecture
+
+---
+
+# 4. Frontend supporté
+
+## HTML/CSS/JS
+
+Cas d’usage :
+
+* landing page
+* portfolio
+* vitrine
+* page marketing
+
+---
+
+## React Vite
+
+Cas d’usage :
+
+* dashboard
+* SaaS
+* app web interactive
+* admin panel
+
+Support :
+
+* React Router
+* Zustand
+* React Query
+* Tailwind
+* Framer Motion
+* Recharts
+* i18n
+
+---
+
+## Next.js
+
+Support :
+
+* App Router
+* Server Actions
+* API Routes
+* Prisma
+* NextAuth
+* SSR/SSG
+* Middleware
+* PWA
+
+---
+
+## Vue / Nuxt
+
+Support :
+
+* Pinia
+* Nuxt UI
+* Tailwind
+* Supabase
+* i18n
+
+---
+
+## Astro
+
+Support :
+
+* islands architecture
+* React/Vue/Svelte islands
+* MDX
+* blogs
+* docs
+
+---
+
+# 5. Mobile supporté
+
+## React Native / Expo
+
+Support complet :
+
+* Expo Router
+* NativeWind
+* React Query
+* Zustand
+* Notifications push
+* Maps GPS
+* Camera
+* Biometrics
+* Async Storage
+* Stripe
+* Deep linking
+* OTA Updates
+* SQLite
+* Offline mode
+
+---
+
+## Flutter
+
+Support :
+
+* Riverpod
+* GoRouter
+* Hive
+* Firebase
+* Bloc
+
+---
+
+# 6. Backend supporté
+
+## FastAPI
+
+Support :
+
+* JWT auth
+* OAuth
+* SQLAlchemy
+* Alembic
+* Async routes
+* WebSockets
+* File upload
+* Background tasks
+
+---
+
+## Flask
+
+Support :
+
+* Blueprint architecture
+* SQLAlchemy
+* JWT
+* REST APIs
+* Celery
+
+---
+
+## Django
+
+Support :
+
+* Django REST Framework
+* Auth
+* Admin panel
+* ORM
+* Channels WebSockets
+
+---
+
+## Express/Fastify
+
+Support :
+
+* REST APIs
+* JWT
+* Prisma
+* WebSockets
+* File uploads
+* Swagger docs
+
+---
+
+# 7. Bases de données supportées
+
+## SQL
+
+* PostgreSQL
+* MySQL
+* SQLite
+
+## NoSQL
+
+* MongoDB
+* Redis
+
+## Cloud DB
+
+* Supabase
+* Firebase
+* Neon
+* PlanetScale
+* Turso
+
+---
+
+# 8. Fonctionnalités IA avancées
+
+Le MCP peut :
+
+* analyser screenshots
+* analyser URLs
+* analyser projets existants
+* générer architecture automatiquement
+* corriger erreurs automatiquement
+* générer design systems
+* générer composants UI
+* générer APIs
+* générer schémas DB
+* faire refactoring intelligent
+
+---
+
+# 9. Architecture complète du projet
+
+```txt
+mcp-fullstack-builder/
+├── src/
+│
+├── index.ts
+├── server.ts
+│
+├── agent/
+│   ├── orchestrator.ts
+│   ├── planner.ts
+│   ├── task-runner.ts
+│   ├── workflow-engine.ts
+│   ├── context-manager.ts
+│   ├── memory-manager.ts
+│   ├── self-healing.ts
+│   └── runtime-supervisor.ts
+│
+├── generators/
+│   ├── frontend/
+│   ├── mobile/
+│   ├── backend/
+│   ├── database/
+│   └── deployment/
+│
+├── modules/
+│   ├── design-engine.ts
+│   ├── asset-hunter.ts
+│   ├── project-analyzer.ts
+│   ├── dependency-manager.ts
+│   ├── testing-engine.ts
+│   ├── runtime-manager.ts
+│   ├── deployment-manager.ts
+│   ├── ai-reviewer.ts
+│   ├── code-reviewer.ts
+│   ├── security-scanner.ts
+│   ├── prompt-enhancer.ts
+│   └── architecture-planner.ts
+│
+├── tools/
+│   ├── filesystem/
+│   ├── terminal/
+│   ├── git/
+│   ├── diagnostics/
+│   └── deployment/
+│
+├── templates/
+├── runtime/
+├── cache/
+├── deployments/
+├── prompts/
+├── docs/
+└── tests/
+```
+
+---
+
+# 10. Installation
+
+## Node.js
+
+```bash
+node --version
+```
+
+Version recommandée :
+
+```txt
+>= 20
+```
+
+---
+
+## Installer dépendances
+
+```bash
+npm install
+```
+
+ou
+
+```bash
+pnpm install
+```
+
+---
+
+## Dépendances principales
+
+```bash
+npm install @modelcontextprotocol/sdk
+npm install playwright
+npm install sharp
+npm install axios
+npm install cheerio
+npm install zod
+npm install dotenv
+npm install fs-extra
+npm install execa
+npm install chokidar
+npm install simple-git
+npm install openai
+```
+
+---
+
+## Dépendances mobile
+
+```bash
+npm install -g expo-cli
+npm install -g eas-cli
+```
+
+---
+
+## Dépendances Python
+
+```bash
+pip install fastapi
+pip install flask
+pip install uvicorn
+pip install sqlalchemy
+pip install alembic
+```
+
+---
+
+# 11. Configuration environnement
+
+## `.env`
+
+```env
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+UNSPLASH_ACCESS_KEY=
+PEXELS_API_KEY=
+GITHUB_TOKEN=
+VERCEL_TOKEN=
+NETLIFY_TOKEN=
+SUPABASE_URL=
+SUPABASE_KEY=
+```
+
+---
+
+# 12. Outils MCP disponibles
+
+# Design
+
+```txt
+analyze_url_design
+analyze_image_design
+suggest_design
+extract_design_tokens
+clone_design_system
+```
+
+---
+
+# Frontend
+
+```txt
+generate_html_site
+generate_react_app
+generate_nextjs_app
+generate_vue_app
+generate_nuxt_app
+generate_astro_site
+generate_svelte_app
+```
+
+---
+
+# Mobile
+
+```txt
+generate_mobile_app
+generate_flutter_app
+generate_expo_app
+generate_ionic_app
+```
+
+---
+
+# Backend
+
+```txt
+generate_fastapi_backend
+generate_flask_backend
+generate_django_backend
+generate_express_backend
+generate_fastify_backend
+generate_nest_backend
+```
+
+---
+
+# Database
+
+```txt
+generate_prisma_schema
+generate_sqlalchemy_models
+generate_mongodb_models
+generate_migrations
+```
+
+---
+
+# Filesystem
+
+```txt
+read_file
+write_file
+edit_file
+delete_file
+copy_file
+move_file
+list_directory
+search_files
+generate_tree
+```
+
+---
+
+# Terminal
+
+```txt
+run_terminal_command
+run_npm_install
+run_pnpm_install
+run_pip_install
+run_build
+run_tests
+run_expo_start
+kill_process
+```
+
+---
+
+# Debugging
+
+```txt
+analyze_build_error
+fix_typescript_errors
+fix_react_errors
+fix_nextjs_errors
+fix_expo_errors
+fix_python_errors
+fix_fastapi_errors
+fix_flask_errors
+fix_dependency_conflicts
+```
+
+---
+
+# Deployment
+
+```txt
+deploy_vercel
+deploy_netlify
+deploy_railway
+deploy_render
+deploy_docker
+deploy_expo
+```
+
+---
+
+# 13. Système agentique autonome
+
+## orchestrator.ts
+
+Le cerveau du système.
+
+Responsable de :
+
+* comprendre demande utilisateur
+* créer plan
+* appeler outils
+* gérer erreurs
+* corriger code
+* relancer builds
+
+---
+
+# Workflow autonome
+
+```txt
+Utilisateur:
+"Crée une app ecommerce mobile"
+
+1. Analyse besoin
+2. Choisit Expo + FastAPI
+3. Génère architecture
+4. Génère frontend mobile
+5. Génère backend
+6. Génère DB
+7. Installe dépendances
+8. Lance build
+9. Corrige erreurs
+10. Déploie backend
+11. Retourne projet prêt
+```
+
+---
+
+# 14. Génération frontend
+
+Le système peut générer :
+
+* composants
+* pages
+* layouts
+* hooks
+* stores
+* APIs
+* animations
+* responsive design
+* dark mode
+
+---
+
+# 15. Génération mobile
+
+Le système peut générer :
+
+* navigation tabs
+* stack navigation
+* auth mobile
+* maps GPS
+* notifications
+* payments
+* camera
+* uploads
+* realtime chat
+* SQLite offline
+* biometrics
+
+---
+
+# 16. Génération backend
+
+Le système peut générer :
+
+* REST APIs
+* GraphQL APIs
+* auth JWT
+* OAuth
+* CRUD
+* uploads
+* WebSockets
+* queues
+* workers
+* admin panels
+
+---
+
+# 17. Génération base de données
+
+Le système peut générer :
+
+* schémas SQL
+* migrations
+* relations
+* seeders
+* indexes
+* policies
+* RBAC
+
+---
+
+# 18. Filesystem Tools
+
+Le MCP peut :
+
+* lire fichiers
+* modifier fichiers
+* supprimer fichiers
+* rechercher code
+* créer dossiers
+* déplacer fichiers
+
+---
+
+# 19. Terminal Tools
+
+Le MCP peut :
+
+* lancer npm
+* lancer pnpm
+* lancer pip
+* lancer expo
+* lancer docker
+* exécuter commandes shell
+
+---
+
+# 20. Debugging autonome
+
+Le MCP peut :
+
+* analyser logs
+* détecter erreurs
+* corriger automatiquement
+* rebuild
+* retester
+
+---
+
+# 21. Self-Healing Engine
+
+Le système peut :
+
+```txt
+1. détecter erreur
+2. comprendre erreur
+3. modifier code
+4. rebuild
+5. retester
+6. répéter jusqu’au succès
+```
+
+---
+
+# 22. Analyse de projets existants
+
+Le MCP peut :
+
+* détecter framework
+* détecter architecture
+* détecter dépendances
+* détecter problèmes
+* améliorer structure
+
+---
+
+# 23. Design Intelligence Engine
+
+Le système peut :
+
+* extraire palette
+* extraire typographie
+* détecter spacing
+* détecter animations
+* convertir vers Tailwind
+* convertir vers NativeWind
+
+---
+
+# 24. Génération multimodale
+
+Inputs supportés :
+
+* prompt texte
+* screenshot
+* image
+* URL
+* Figma
+* PDF
+* wireframe
+
+---
+
+# 25. Déploiement automatique
+
+## Frontend
+
+* Vercel
+* Netlify
+* Cloudflare Pages
+* GitHub Pages
+
+## Backend
+
+* Railway
+* Render
+* Fly.io
+* Docker VPS
+
+## Mobile
+
+* Expo EAS
+* TestFlight
+* Play Store
+
+---
+
+# 26. Sécurité
+
+Le MCP peut :
+
+* scanner vulnérabilités
+* détecter secrets
+* sécuriser .env
+* générer auth
+* générer RBAC
+
+---
+
+# 27. Tests automatiques
+
+Support :
+
+* Vitest
+* Jest
+* Playwright
+* Cypress
+* Pytest
+
+---
+
+# 28. Docker & CI/CD
+
+Le système peut générer :
+
+```txt
+Dockerfile
+docker-compose.yml
+GitHub Actions
+GitLab CI
+nginx.conf
+```
+
+---
+
+# 29. Runtime management
+
+Le MCP peut :
+
+* surveiller builds
+* gérer processus
+* relancer serveurs
+* hot reload
+* live preview
+
+---
+
+# 30. Marketplace & plugins
+
+Support plugins :
+
+```txt
+auth-plugin
+payment-plugin
+ai-chat-plugin
+analytics-plugin
+ecommerce-plugin
+```
+
+---
+
+# 31. Workflows complets
+
+## Exemple 1
+
+```txt
+"Crée une landing page moderne React"
+```
+
+Le MCP :
+
+* génère design
+* génère React
+* génère Tailwind
+* installe dépendances
+* lance build
+
+---
+
+## Exemple 2
+
+```txt
+"Crée un backend FastAPI ecommerce"
+```
+
+Le MCP :
+
+* génère FastAPI
+* génère SQLAlchemy
+* génère JWT auth
+* génère CRUD
+* génère Swagger docs
+
+---
+
+## Exemple 3
+
+```txt
+"Crée une app mobile livraison"
+```
+
+Le MCP :
+
+* génère Expo
+* navigation
+* maps
+* realtime tracking
+* backend API
+* notifications push
+
+---
+
+# 32. Roadmap future
+
+Fonctionnalités futures :
+
+* génération IA temps réel
+* génération Figma → code
+* multi-agent collaboration
+* génération WebAssembly
+* génération IA offline
+* agent mémoire persistante
+* génération cloud-native
+* génération Kubernetes
+* génération microservices avancés
+
+---
+
+# Résultat final
+
+Ce MCP devient :
+
+```txt
+Autonomous AI FullStack Engineering Platform
+```
+
+capable de :
+
+* créer apps web
+* créer apps mobiles
+* créer backends Node/Python/Go/Rust
+* corriger erreurs automatiquement
+* déployer automatiquement
+* maintenir projets
+* modifier projets existants
+* agir comme développeur autonome IA complet.
